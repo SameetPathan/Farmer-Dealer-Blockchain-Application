@@ -52,8 +52,8 @@ function App() {
                 <Route exact path='/dealerviewproduct' element={<DealerViewProduct setfixedbottom={setfixedbottom}></DealerViewProduct>}></Route>
                 <Route exact path='/dealerorder' element={<DealerOrder isgov={false} setfixedbottom={setfixedbottom}></DealerOrder>}></Route>
                 <Route exact path='/vieworders' element={<ViewOrdersFarmer setfixedbottom={setfixedbottom}></ViewOrdersFarmer>}></Route>
-                {/* <Route exact path='/userview' element={<UserProductView setfixedbottom={setfixedbottom}></UserProductView>}></Route> */}
-                {/* <Route exact path='/adminsales' element={<Admingov setfixedbottom={setfixedbottom} isgov={true}></Admingov>}></Route> */}
+              <Route exact path='/userview' element={<UserProductView setfixedbottom={setfixedbottom}></UserProductView>}></Route> 
+                <Route exact path='/adminsales' element={<Admingov setfixedbottom={setfixedbottom} isgov={true}></Admingov>}></Route> 
               </Routes>
             </div>
               <FooterComponent fixedbottom={fixedbottom}></FooterComponent>
