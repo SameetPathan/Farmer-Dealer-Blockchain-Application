@@ -1,8 +1,11 @@
-import React from 'react'
+import React,{useState} from 'react'
 import ViewProductComponent from './ViewProductComponent'
 import DealerOrder from './DealerOrder'
+import ViewOrdersFarmer from './ViewOrdersFarmer'
 
 function Admingov(props) {
+
+  const [fixedbottom, setfixedbottom] = useState(true);
   return (
     <div>
        <div class="alert alert-dark" role="alert">
@@ -16,6 +19,7 @@ function Admingov(props) {
 
         <ViewProductComponent isgov={props.isgov} setfixedbottom={props.setfixedbottom}></ViewProductComponent>
         <DealerOrder isgov={props.isgov} setfixedbottom={props.setfixedbottom}></DealerOrder>
+        
     </div>
   )
 }

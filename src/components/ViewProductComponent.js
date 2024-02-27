@@ -293,6 +293,8 @@ var whole2 = [];
 
 function ViewProductComponent(props) {
 
+	
+
 	const [account, setAccount] = useState(null);
 
 	const [w2, setw2] = useState([]);
@@ -338,6 +340,17 @@ function ViewProductComponent(props) {
 		getAllproducts();
 		setacc();
       });
+
+	  const [selectedYear, setSelectedYear] = useState('');
+
+	const handleYearChange = (event) => {
+		setSelectedYear(event.target.value);
+	  };
+	
+	  const filteredProducts = w2.filter((record) => {
+		const harvestDate = new Date(Number(record[5]));
+		return selectedYear === '' || harvestDate.getFullYear().toString() === selectedYear;
+	  });
   
   return (
 	<div>
@@ -347,7 +360,28 @@ function ViewProductComponent(props) {
 </div>
 
 	<div className="container-fluid shadow-lg p-3 mb-5 bg-white rounded mt-3">
-  {w2.map((record, index) => (
+
+	<div className='container m-4'>
+          <label className='mr-3' htmlFor="yearFilter">Select Year: </label>
+          <select id="yearFilter" value={selectedYear} onChange={handleYearChange}>
+            <option value="">All Years</option>
+           
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+			<option value="2022">2022</option>
+			<option value="2023">2023</option>
+			<option value="2024">2024</option>
+			<option value="2025">2025</option>
+			<option value="2026">2026</option>
+			<option value="2027">2027</option>
+			<option value="2028">2028</option>
+			<option value="2029">2029</option>
+			<option value="2030">2030</option>
+            
+          </select>
+        </div>
+
+  {filteredProducts.map((record, index) => (
     <div className="card mb-5">
       <div className="card-header bg-dark text-white">
         Product Information
