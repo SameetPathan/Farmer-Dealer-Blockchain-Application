@@ -5,7 +5,8 @@ import Loader from './Loader';
 
 
 
-const ProductContractAddress="0x29b48f6258CDEA3b4e094b536aB4128C48e20dbD";
+
+const ProductContractAddress="0x1A53896aE0281eda0b2793fA8f321F944584D2d5";
 const abiProductContract=[
 	{
 		"inputs": [
@@ -20,19 +21,14 @@ const abiProductContract=[
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "FarmAddress",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "PricePerUnit",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "HarvestDate",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -51,7 +47,22 @@ const abiProductContract=[
 			},
 			{
 				"internalType": "string",
-				"name": "imagepath",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
 				"type": "string"
 			}
 		],
@@ -82,19 +93,14 @@ const abiProductContract=[
 						"type": "string"
 					},
 					{
-						"internalType": "string",
-						"name": "FarmAddress",
-						"type": "string"
-					},
-					{
 						"internalType": "uint256",
 						"name": "PricePerUnit",
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "string",
 						"name": "HarvestDate",
-						"type": "uint256"
+						"type": "string"
 					},
 					{
 						"internalType": "string",
@@ -113,7 +119,22 @@ const abiProductContract=[
 					},
 					{
 						"internalType": "string",
-						"name": "imagepath",
+						"name": "FarmerName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerPhoneNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ImageUrl",
 						"type": "string"
 					}
 				],
@@ -159,16 +180,6 @@ const abiProductContract=[
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -179,9 +190,29 @@ const abiProductContract=[
 				"type": "string"
 			},
 			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -236,19 +267,14 @@ const abiProductContract=[
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "FarmAddress",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "PricePerUnit",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "HarvestDate",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -267,24 +293,26 @@ const abiProductContract=[
 			},
 			{
 				"internalType": "string",
-				"name": "imagepath",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
 				"type": "string"
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ProductId",
-				"type": "uint256"
-			}
-		],
-		"name": "updateProduct",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ];
@@ -297,6 +325,8 @@ function UserProductView(props) {
 	const [account, setAccount] = useState(null);
 
 	const [w2, setw2] = useState([]);
+	const [filteredProducts, setFilteredProducts] = useState([]);
+	const [averageProducts, setaverageProducts] = useState([]);
 
 	const setacc=async()=>{
 
@@ -308,12 +338,13 @@ function UserProductView(props) {
 	  }
 
       const averagePricesByName = (productsList) => {
+		debugger
         const productsMap = new Map();
         productsList.forEach((product) => {
-          const name = product[8]; // Assuming product name is at index 8
-          const price = parseFloat(product[4]); // Assuming price is at index 4
-          const imagepath = product[9];
-          const Type = product[6];
+          const name = product[7]; // Assuming product name is at index 8
+          const price = parseFloat(product[3]); // Assuming price is at index 4
+          const imagepath = product[11];
+          const Type = product[5];
     
           if (productsMap.has(name)) {
             const { totalPrice, count } = productsMap.get(name);
@@ -329,10 +360,12 @@ function UserProductView(props) {
           const averagePrice = totalPrice / count;
           averagedProducts.push({ name: key, averagePrice,imagepath,Type });
         });
+		setaverageProducts(averagedProducts)
+		setFilteredProducts(averagedProducts)
         return averagedProducts;
       };
 
-      const averageProducts = averagePricesByName(w2);
+      
 
 	async function getAllproducts() {
 		try {
@@ -354,6 +387,7 @@ function UserProductView(props) {
 			  whole2[i] = arraylist2[i];
 			}
 			setw2(whole2);
+			averagePricesByName(whole2);
 			console.log(whole2)
 		  }
 		} catch (error) {
@@ -365,7 +399,31 @@ function UserProductView(props) {
         props.setfixedbottom(false);
 		getAllproducts();
 		setacc();
-      });
+	},[]);
+
+
+	  const [selecteddata, setSelecteddata] = useState('');
+	  
+	
+	  // ... (other functions)
+	
+
+	  const handledataChange = (event) => {
+		setSelecteddata(event.target.value);
+		updateFilteredProducts(event.target.value);
+	  };
+	
+	
+	  const updateFilteredProducts = (data) => {
+		const updatedFilteredProducts = averageProducts.filter((record) => {
+		  const recordData = String(record).toLowerCase();
+		  const dataCondition = data === '' || recordData.includes(data.toLowerCase());
+		  return dataCondition;
+		});
+		setFilteredProducts(updatedFilteredProducts);
+	  };
+
+	  
   
   return (
 	<div>
@@ -377,7 +435,18 @@ function UserProductView(props) {
 </div>
 
 	<div className="container-fluid shadow-lg p-3 mb-5 bg-white rounded mt-3">
-  {averageProducts.map((record, index) => (
+
+
+	<div class="form-group" style={{width:"40%"}}>
+	<label className='mr-3'>Filter Product here</label>
+	<input type="text" value={selecteddata} onChange={handledataChange}  id="text" aria-describedby="emailHelp"/>
+	<small id="text" class="form-text text-muted">Please enter product name to filter out the product.</small>
+  </div>
+
+	
+
+
+  {filteredProducts.map((record, index) => (
     <div className="card mb-5">
       <div className="card-header bg-dark text-white">
         Product Information

@@ -7,12 +7,15 @@ contract ProductContract {
         uint256 ProductId;
         address UserAddress;
         string AdditionalInfo;
-        string FarmAddress;
         uint PricePerUnit;
-        uint HarvestDate;
+        string HarvestDate;
         string Type;
         uint Quantity;
         string ProductName;
+        string FarmerName;
+        string FarmerPhoneNumber;
+        string FarmerAddress;
+        string ImageUrl; 
     }
 
     ProductData[] public products;
@@ -21,52 +24,47 @@ contract ProductContract {
     function addProduct(
         address UserAddress,
         string memory AdditionalInfo,
-        string memory FarmAddress,
         uint PricePerUnit,
-        uint HarvestDate,
+        string memory HarvestDate,
         string memory Type,
         uint Quantity,
-        string memory ProductName
+        string memory ProductName,
+        string memory FarmerName,
+        string memory FarmerPhoneNumber,
+        string memory FarmerAddress,
+          string memory ImageUrl 
     ) public {
         ProductData memory newProduct = ProductData(
             nextProductId,
             UserAddress,
             AdditionalInfo,
-            FarmAddress,
             PricePerUnit,
             HarvestDate,
             Type,
             Quantity,
-            ProductName
+            ProductName,
+            FarmerName,
+            FarmerPhoneNumber,
+            FarmerAddress,
+            ImageUrl  
         );
         products.push(newProduct);
         nextProductId++;
     }
 
-    function updateProduct(uint256 ProductId) public {
-        for (uint i = 0; i < products.length; i++) {
-            if (products[i].ProductId == ProductId) {
-                // Update logic remains the same
-                products[i].AdditionalInfo = products[i].AdditionalInfo;
-                products[i].FarmAddress = products[i].FarmAddress;
-                products[i].PricePerUnit = products[i].PricePerUnit;
-                products[i].HarvestDate = products[i].HarvestDate;
-                products[i].Type = products[i].Type;
-                products[i].Quantity = products[i].Quantity;
-                products[i].ProductName = products[i].ProductName;
-                return;
-            }
-        }
-    }
+    
 
     function getProduct(uint256 ProductId) public view returns (
         address,
         string memory,
-        string memory,
-        uint,
         uint,
         string memory,
+        string memory,
         uint,
+        string memory,
+        string memory,
+        string memory,
+        string memory,
         string memory
     ) {
         for (uint i = 0; i < products.length; i++) {
@@ -74,12 +72,15 @@ contract ProductContract {
                 return (
                     products[i].UserAddress,
                     products[i].AdditionalInfo,
-                    products[i].FarmAddress,
                     products[i].PricePerUnit,
                     products[i].HarvestDate,
                     products[i].Type,
                     products[i].Quantity,
-                    products[i].ProductName
+                    products[i].ProductName,
+                    products[i].FarmerName,
+                    products[i].FarmerPhoneNumber,
+                    products[i].FarmerAddress,
+                    products[i].ImageUrl
                 );
             }
         }
@@ -87,11 +88,14 @@ contract ProductContract {
         return (
             address(0),
             "Not Found",
-            "Not Found",
-            0,
             0,
             "Not Found",
+            "Not Found",
             0,
+            "Not Found",
+            "Not Found",
+            "Not Found",
+            "Not Found",
             "Not Found"
         );
     }

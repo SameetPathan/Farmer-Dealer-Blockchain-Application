@@ -3,288 +3,315 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Loader from "./Loader";
 
-const ProductContractAddress = "0x29b48f6258CDEA3b4e094b536aB4128C48e20dbD";
-const abiProductContract = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "UserAddress",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "AdditionalInfo",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "FarmAddress",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "PricePerUnit",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "HarvestDate",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "Type",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "Quantity",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "ProductName",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "imagepath",
-        type: "string",
-      },
-    ],
-    name: "addProduct",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getAllProducts",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "ProductId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "UserAddress",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "AdditionalInfo",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "FarmAddress",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "PricePerUnit",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "HarvestDate",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "Type",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "Quantity",
-            type: "uint256",
-          },
-          {
-            internalType: "string",
-            name: "ProductName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "imagepath",
-            type: "string",
-          },
-        ],
-        internalType: "struct ProductContract.ProductData[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getNumberOfRecords",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "ProductId",
-        type: "uint256",
-      },
-    ],
-    name: "getProduct",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "nextProductId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "products",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "ProductId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "UserAddress",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "AdditionalInfo",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "FarmAddress",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "PricePerUnit",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "HarvestDate",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "Type",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "Quantity",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "ProductName",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "imagepath",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "ProductId",
-        type: "uint256",
-      },
-    ],
-    name: "updateProduct",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+const ProductContractAddress="0x1A53896aE0281eda0b2793fA8f321F944584D2d5";
+const abiProductContract=[
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "UserAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "AdditionalInfo",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "PricePerUnit",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "HarvestDate",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "Type",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "Quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "ProductName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
+				"type": "string"
+			}
+		],
+		"name": "addProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getAllProducts",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "ProductId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "UserAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "AdditionalInfo",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "PricePerUnit",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "HarvestDate",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "Type",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "Quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "ProductName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerPhoneNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ImageUrl",
+						"type": "string"
+					}
+				],
+				"internalType": "struct ProductContract.ProductData[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getNumberOfRecords",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "ProductId",
+				"type": "uint256"
+			}
+		],
+		"name": "getProduct",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "nextProductId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "products",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "ProductId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "UserAddress",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "AdditionalInfo",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "PricePerUnit",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "HarvestDate",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "Type",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "Quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "ProductName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ];
 
 
@@ -293,6 +320,7 @@ var whole2 = [];
 
 function DealerViewProduct(props) {
   const [account, setAccount] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [w2, setw2] = useState([]);
 
@@ -300,6 +328,7 @@ function DealerViewProduct(props) {
   const [selectedProductDeatils, setselectedProductDeatils] = useState({
     ProductName: "",
     imagepath: "",
+    productId:""
   });
   const [buyerDetails, setBuyerDetails] = useState({
     name: "",
@@ -309,10 +338,11 @@ function DealerViewProduct(props) {
     quantity: "",
   });
 
-  const handleChange2 = (name, imagepath) => {
+  const handleChange2 = (name, imagepath,productId) => {
     setselectedProductDeatils({
       ProductName: name,
       imagepath: imagepath,
+      productId:productId
     });
   };
 
@@ -337,7 +367,7 @@ function DealerViewProduct(props) {
     console.log("Dealer Deales", selectedProductDeatils);
     try {
 
-      const DealerContractAddress = "0xA1d2c6a9839963eCfaeb90D5f2865C20B086Bee1";
+      const DealerContractAddress = "0x09C1be1Bc686241636AdAD5bBAc6d2Bf44b01C9d";
       const abiDealerContract = [
         {
           "inputs": [
@@ -385,9 +415,32 @@ function DealerViewProduct(props) {
               "internalType": "uint256",
               "name": "acceptedStatus",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "productId",
+              "type": "uint256"
             }
           ],
           "name": "addProduct",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "buyid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "status",
+              "type": "uint256"
+            }
+          ],
+          "name": "updateDriver",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -446,6 +499,11 @@ function DealerViewProduct(props) {
                 {
                   "internalType": "uint256",
                   "name": "acceptedStatus",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "productId",
                   "type": "uint256"
                 }
               ],
@@ -542,27 +600,14 @@ function DealerViewProduct(props) {
               "internalType": "uint256",
               "name": "acceptedStatus",
               "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "buyid",
-              "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "status",
+              "name": "productId",
               "type": "uint256"
             }
           ],
-          "name": "updateDriver",
-          "outputs": [],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         }
       ];
@@ -579,10 +624,12 @@ function DealerViewProduct(props) {
           const UserAddress = accounts[0];
          
           console.log("Initialize");
-       
 
 
-          let Txn2 = await DealerContract.addProduct(UserAddress,buyerDetails.name,buyerDetails.address,buyerDetails.phoneNumber,selectedProductDeatils.ProductName,selectedProductDeatils.imagepath,buyerDetails.quantity,buyerDetails.negotiatedPrice,0);
+         
+          
+
+          let Txn2 = await DealerContract.addProduct(UserAddress,buyerDetails.name,buyerDetails.address,buyerDetails.phoneNumber,selectedProductDeatils.ProductName,selectedProductDeatils.imagepath,buyerDetails.quantity,buyerDetails.negotiatedPrice,0,selectedProductDeatils.productId);
           console.log("Mining... please wait");
           await Txn2.wait();
       
@@ -626,6 +673,8 @@ function DealerViewProduct(props) {
           whole2[i] = arraylist2[i];
         }
         setw2(whole2);
+        setFilteredProducts(whole2);
+
         //console.log(whole2)
       }
     } catch (error) {
@@ -636,18 +685,40 @@ function DealerViewProduct(props) {
   useEffect(() => {
     props.setfixedbottom(false);
     getAllproducts();
+   // updateFilteredProducts('','')
     setacc();
-  });
+  },[]);
 
-  const [data2, setSelectedYear] = useState('');
+ 
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selecteddata, setSelecteddata] = useState('');
+  
+
+  // ... (other functions)
 
   const handleYearChange = (event) => {
-		setSelectedYear(event.target.value);
-	  };
-	
-    const filteredProducts = w2.filter((record) => {
-      return data2 === '' || record.includes(data2);
-  });
+    setSelectedYear(event.target.value);
+    updateFilteredProducts(event.target.value, selecteddata);
+  };
+
+  const handledataChange = (event) => {
+    setSelecteddata(event.target.value);
+    updateFilteredProducts(selectedYear, event.target.value);
+  };
+
+
+  const updateFilteredProducts = (year, data) => {
+    const updatedFilteredProducts = w2.filter((record) => {
+      const harvestDate = String(record[4]).toLowerCase();
+      const recordData = String(record).toLowerCase();
+
+      const yearCondition = year === '' || harvestDate.includes(year.toLowerCase());
+      const dataCondition = data === '' || recordData.includes(data.toLowerCase());
+
+      return yearCondition && dataCondition;
+    });
+    setFilteredProducts(updatedFilteredProducts);
+  };
 
   return (
     <div>
@@ -661,33 +732,17 @@ function DealerViewProduct(props) {
 
 
    
-     
+      <div class="form-group" style={{width:"40%"}}>
+      <label className='mr-3'>Filter Product here</label>
+      <input type="text" value={selecteddata} onChange={handledataChange}  id="text" aria-describedby="emailHelp"/>
+      <small id="text" class="form-text text-muted">Please enter product name , farmer name , or any keyword to filter out the product.</small>
+    </div>
 
       <div className='container m-4'>
-      <div className="container" style={{width:"200px"}}>
-      <div class="input-group input-group-sm mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-sm">Product Name</span>
-      </div>
-      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"/>
-    </div>
-      </div>
-
-      <div className="container" style={{width:"200px"}}>
-      <div class="input-group input-group-sm mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
-      </div>
-      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"/>
-    </div>
-      </div>
-
-
-     
-
+    
 
           <label className='mr-3' htmlFor="yearFilter">Select Year: </label>
-          <select id="yearFilter" value={data2} onChange={handleYearChange}>
+          <select id="yearFilter" value={selectedYear} onChange={handleYearChange}>
             <option value="">All Years</option>
            
             <option value="2020">2020</option>
@@ -714,40 +769,37 @@ function DealerViewProduct(props) {
             <div className="card-body d-flex">
               <div className="col-sm-8">
                 <dl className="row">
-                  <dt className="col-sm-3">Product Name</dt>
-                  <dd className="col-sm-9" id="pname">
-                    {String(record[8])}
-                  </dd>
-
-                  <dt className="col-sm-3">Quantity</dt>
-                  <dd className="col-sm-9" id="quantity">
-                    {String(record[7])}
-                  </dd>
-
-                  <dt className="col-sm-3">Type</dt>
-                  <dd className="col-sm-9" id="type">
-                    {String(record[6])}
-                  </dd>
-
-                  <dt className="col-sm-3">Harvest Date</dt>
-                  <dd className="col-sm-9" id="harvestdate">
-                    {new Date(Number(record[5])).toLocaleDateString()}
-                  </dd>
-
-                  <dt className="col-sm-3">Price per Unit</dt>
-                  <dd className="col-sm-9" id="priceperunit">
-                    {String(record[4])}
-                  </dd>
-
-                  <dt className="col-sm-3">Farm Address</dt>
-                  <dd className="col-sm-9" id="farmaddress">
-                    {String(record[3])}
-                  </dd>
-
-                  <dt className="col-sm-3">Additional Info</dt>
-                  <dd className="col-sm-9" id="AdditionalInfo">
-                    {String(record[2])}
-                  </dd>
+                <dt className="col-sm-3">Product Name</dt>
+                <dd className="col-sm-9" id="pname">{String(record[7])}</dd>
+            
+                <dt className="col-sm-3">Quantity</dt>
+                <dd className="col-sm-9" id="quantity">{String(record[6])}</dd>
+            
+                <dt className="col-sm-3">Type</dt>
+                <dd className="col-sm-9" id="type">{String(record[5])}</dd>
+            
+                <dt className="col-sm-3">Harvest Date</dt>
+                <dd className="col-sm-9" id="harvestdate">
+                {record[4]}
+                </dd>
+            
+                <dt className="col-sm-3">Price per Unit</dt>
+                <dd className="col-sm-9" id="priceperunit">{String(record[3])}</dd>
+            
+                <dt className="col-sm-3">Farm Address</dt>
+                <dd className="col-sm-9" id="farmaddress">{String(record[10])}</dd>
+          
+                <dt className="col-sm-3">Farmer Name</dt>
+                <dd className="col-sm-9" id="pname">{String(record[8])}</dd>
+          
+                <dt className="col-sm-3">Farmer Phonenumber</dt>
+                <dd className="col-sm-9" id="pname">{String(record[9])}</dd>
+          
+                <dt className="col-sm-3">Product Name</dt>
+                <dd className="col-sm-9" id="pname">{String(record[7])}</dd>
+          
+                <dt className="col-sm-3">Additional Info</dt>
+                <dd className="col-sm-9" id="AdditionalInfo">{String(record[2])}</dd>
                 </dl>
 
                 <div className="card-footer">
@@ -756,7 +808,7 @@ function DealerViewProduct(props) {
                     className="btn btn-primary ml-2"
                     onClick={() => {
                       handleBuyClick(String(record[0]));
-                      handleChange2(String(record[8]), String(record[9]));
+                      handleChange2(String(record[7]), String(record[11]),String(record[0]));
                     }}
                   >
                     Buy
@@ -876,7 +928,7 @@ function DealerViewProduct(props) {
               </div>
               <div className="col-sm-4">
                 <img
-                  src={String(record[9])}
+                  src={String(record[11])}
                   alt="Product Image"
                   className="img-fluid"
                   height={200}

@@ -47,7 +47,7 @@ function App() {
                 <Route exact path='/' element={<UserTypeComponent setfixedbottom={setfixedbottom}></UserTypeComponent>}></Route>
                 <Route exact path='/farmerhome' element={<FarmerHome setfixedbottom={setfixedbottom}></FarmerHome>}></Route>
                 <Route exact path='/dealerhome' element={<DealerHome setfixedbottom={setfixedbottom}></DealerHome>}></Route>
-                <Route exact path='/addproduct' element={<AddProductComponent ></AddProductComponent>}></Route>
+                <Route exact path='/addproduct' element={<AddProductComponent currentAccount={currentAccount}></AddProductComponent>}></Route>
                 <Route exact path='/viewproduct' element={<ViewProductComponent isgov={false} setfixedbottom={setfixedbottom}></ViewProductComponent>}></Route>
                 <Route exact path='/dealerviewproduct' element={<DealerViewProduct setfixedbottom={setfixedbottom}></DealerViewProduct>}></Route>
                 <Route exact path='/dealerorder' element={<DealerOrder isgov={false} setfixedbottom={setfixedbottom}></DealerOrder>}></Route>

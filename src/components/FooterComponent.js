@@ -5,7 +5,7 @@ function FooterComponent(props) {
 
   return(
 <>
-<div className={`copyright ${props.fixedbottom ? 'fixed-bottom' : ''}`}>
+<div className={`copyright ${props.fixedbottom ? '' : ''}`}>
       <div className="container-fluid text-center">
         <p>
           Copyrights &copy; 2023 - <a href="#">Farmer Dealer Direct Web App</a>, All Rights Reserved.

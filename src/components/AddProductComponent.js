@@ -1,13 +1,11 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useState,useEffect } from 'react';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ethers } from "ethers";
-import { useState } from "react";
 import Loader from "./Loader";
-import { uploadImageToFirebase } from "./uploaddata";
+import { app } from '../firebaseConfig';
 
-
-const ProductContractAddress = "0x29b48f6258CDEA3b4e094b536aB4128C48e20dbD";
-const abiProductContract = [
+const ContractAddress = "0x1A53896aE0281eda0b2793fA8f321F944584D2d5";
+const abi = [
 	{
 		"inputs": [
 			{
@@ -21,19 +19,14 @@ const abiProductContract = [
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "FarmAddress",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "PricePerUnit",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "HarvestDate",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -52,7 +45,22 @@ const abiProductContract = [
 			},
 			{
 				"internalType": "string",
-				"name": "imagepath",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
 				"type": "string"
 			}
 		],
@@ -83,19 +91,14 @@ const abiProductContract = [
 						"type": "string"
 					},
 					{
-						"internalType": "string",
-						"name": "FarmAddress",
-						"type": "string"
-					},
-					{
 						"internalType": "uint256",
 						"name": "PricePerUnit",
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "string",
 						"name": "HarvestDate",
-						"type": "uint256"
+						"type": "string"
 					},
 					{
 						"internalType": "string",
@@ -114,7 +117,22 @@ const abiProductContract = [
 					},
 					{
 						"internalType": "string",
-						"name": "imagepath",
+						"name": "FarmerName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerPhoneNumber",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "FarmerAddress",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "ImageUrl",
 						"type": "string"
 					}
 				],
@@ -160,16 +178,6 @@ const abiProductContract = [
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
@@ -180,9 +188,29 @@ const abiProductContract = [
 				"type": "string"
 			},
 			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -237,19 +265,14 @@ const abiProductContract = [
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "FarmAddress",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "PricePerUnit",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "HarvestDate",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -268,221 +291,205 @@ const abiProductContract = [
 			},
 			{
 				"internalType": "string",
-				"name": "imagepath",
+				"name": "FarmerName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerPhoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "FarmerAddress",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "ImageUrl",
 				"type": "string"
 			}
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "ProductId",
-				"type": "uint256"
-			}
-		],
-		"name": "updateProduct",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ];
 
-
-function AddProductComponent(props) {
+const AddProductForm = (props) => {
+  const [formValues, setFormValues] = useState({
+    UserAddress: '',
+    AdditionalInfo: '',
+    PricePerUnit: 0,
+    HarvestDate: 0,
+    Type: '',
+    Quantity: 0,
+    ProductName: '',
+    FarmerName: '',
+    FarmerPhoneNumber: '',
+    FarmerAddress: '',
+    Image: null,
+  });
   const [account, setAccount] = useState(null);
-  const [namef,setfilename]=useState("");
-  const [imageUrl, setImageUrl] = useState("");
 
+  const uploadImageToFirebase = async (image) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `images/${image.name}`);
+    await uploadBytes(storageRef, image);
+    const imageUrl = await getDownloadURL(storageRef);
+    return imageUrl;
+  };
 
-  const setacc = async () => {
-    const { ethereum } = window;
-    const accounts = await ethereum.request({ method: "eth_accounts" });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const handleImageChange = (e) => {
+    const image = e.target.files[0];
+    setFormValues({ ...formValues, Image: image });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+	
+
+    // Assuming you have a function to upload image to Firebase and get URL
+    const imageUrl = await uploadImageToFirebase(formValues.Image);
+
+	const { ethereum } = window;
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
     setAccount(accounts[0]);
+
+    try {
+		const { ethereum } = window;
+		if (ethereum) {
+		  const provider = new ethers.providers.Web3Provider(ethereum);
+		  const signer = provider.getSigner();
+		  const ProductContract= new ethers.Contract(ContractAddress, abi, signer);
+  
+		  let Txn2 = await ProductContract.addProduct(props.currentAccount,formValues.AdditionalInfo,formValues.PricePerUnit,String(formValues.HarvestDate),formValues.Type,formValues.Quantity
+			  ,formValues.ProductName,formValues.FarmerName,formValues.FarmerPhoneNumber,formValues.FarmerAddress,imageUrl);
+		  console.log("Mining... please wait");
+		  await Txn2.wait();
+		  console.log(`Mined`);
+		  
+		} else {
+		  console.log(`Error`);
+		}
+  
+	  } catch (err) {
+		console.log(err);
+  
+	  }
+
+    // Reset form
+    // setFormValues({
+    //   UserAddress: '',
+    //   AdditionalInfo: '',
+    //   PricePerUnit: 0,
+    //   HarvestDate: 0,
+    //   Type: '',
+    //   Quantity: 0,
+    //   ProductName: '',
+    //   FarmerName: '',
+    //   FarmerPhoneNumber: '',
+    //   FarmerAddress: '',
+    //   Image: null,
+    // });
   };
 
-  const clear = () => {
-    document.getElementById("myForm").reset();
-	setImageUrl("");
-	setfilename("")
-  };
+  const setacc=async()=>{
 
-  const handleImageChange = (event) => {
-	const file = event.target.files[0];
-	if (file) {
-	  setImageUrl(file);
-	  setfilename(file.name)
-	 // alert("Image Saved")
-	}
-  };
-
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
+   
+    //console.log(account)
+    //account = accounts[0];
+ 
   }
 
-  const savedata = async () => {
-    try {
-      const { ethereum } = window;
 
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-
-        const ProductContract = new ethers.Contract(
-          ProductContractAddress,
-          abiProductContract,
-          signer
-        );
-
-        const accounts = await ethereum.request({ method: "eth_accounts" });
-
-        const UserAddress = accounts[0];
-        const pname = document.getElementById("pname").value;
-        const quantity = document.getElementById("quantity").value;
-        const type = document.getElementById("type").value;
-        let harvestdate = document.getElementById("harvestdate").value;
-        const dateObject = new Date(harvestdate);
-        harvestdate = dateObject.getTime();
-        const priceperunit = document.getElementById("priceperunit").value;
-        const farmaddress = document.getElementById("farmaddress").value;
-        const Additionalinfo = document.getElementById("Additionalinfo").value;
-		let id =  getRandomInt(100,900)
-		uploadImageToFirebase(id,imageUrl,Additionalinfo,
-			farmaddress,
-			priceperunit,
-			harvestdate,
-			type,
-			quantity,
-			pname)
-        clear();
-
-      } else {
-        alert("Ethereum object does not exist");
-      }
-    } catch (err) {
-      alert(err);
-    }
-  };
 
   useEffect(() => {
-    setacc();
+	setacc();
   });
 
+
   return (
-    <>
-      <Loader></Loader>
+	<>
+	<div className="container shadow-lg p-3 mb-5 bg-white rounded mt-3">
+	<div className="alert alert-info" role="alert">
+	Product Details
+  </div>
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label>User:</label>
+        <input type="text" className="form-control" disabled name="UserAddress" value={props.currentAccount} onChange={handleChange} />
+      </div>
 
-      <div className="container shadow-lg p-3 mb-5 bg-white rounded mt-3">
-        <form className="needs-validation" id="myForm" noValidate>
-          <div className="alert alert-info" role="alert">
-            Product Details
-          </div>
+	  <div className="form-group">
+	  <label>Product Name:</label>
+	  <input type="text" className="form-control" name="ProductName" value={formValues.ProductName} onChange={handleChange} />
+	</div>
 
-          <div className="form-row">
-            <div className="col-lg-2 col-md-6 mb-3">
-              <label htmlFor="validationCustom01">Product Name</label>
-              <input type="text" className="form-control" id="pname" required />
-              <div className="valid-feedback">Looks good!</div>
-            </div>
+      <div className="form-group">
+        <label>Additional Info:</label>
+        <input type="text" className="form-control" name="AdditionalInfo" value={formValues.AdditionalInfo} onChange={handleChange} />
+      </div>
 
-            <div className="col-lg-2 col-md-6 mb-3">
-              <label htmlFor="validationCustom02">Quantity</label>
-              <input
-                type="number"
-                className="form-control"
-                id="quantity"
-                required
-              />
-              <div className="valid-feedback">Looks good!</div>
-            </div>
+      <div className="form-group">
+        <label>Price Per Unit:</label>
+        <input type="number" className="form-control" name="PricePerUnit" value={formValues.PricePerUnit} onChange={handleChange} />
+      </div>
 
-            <div className="col-md-3 mb-3">
+      <div className="form-group">
+        <label>Harvest Date:</label>
+        <input type="date" className="form-control" name="HarvestDate" value={formValues.HarvestDate} onChange={handleChange} />
+      </div>
+
+
+	  <div className="form-group">
               <label htmlFor="validationCustom04">Type</label>
-              <select className="custom-select" id="type" required>
+              <select className="custom-select" name="Type" id="type" value={formValues.Type} onChange={handleChange} required>
                 <option value="Vegetable">Vegetable</option>
                 <option value="Fruit">Fruit</option>
                 <option value="Grain">Grain</option>
               </select>
-              <div className="invalid-feedback">Please select a valid Type</div>
+        
             </div>
 
-            <div className="col-lg-2 col-md-6 mb-3">
-              <label htmlFor="validationCustom02">Harvest Date</label>
-              <input
-                type="date"
-                className="form-control"
-                id="harvestdate"
-                required
-              />
-              <div className="valid-feedback">Looks good!</div>
-            </div>
+    
 
-            <div className="col-lg-2 col-md-6 mb-3">
-              <label htmlFor="validationCustom02">Price per Unit</label>
-              <input
-                type="number"
-                className="form-control"
-                id="priceperunit"
-                required
-              />
-              <div className="valid-feedback">Looks good!</div>
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="col-lg-6 form-group">
-              <label htmlFor="inputAddress">Farm Address</label>
-              <input
-                type="text"
-                className="form-control"
-                id="farmaddress"
-                placeholder="Farm Name, Street, Area"
-              />
-            </div>
-            <div className="col-lg-6 form-group">
-              <label htmlFor="inputAddress2">Additional Info</label>
-              <input
-                type="text"
-                className="form-control"
-                id="Additionalinfo"
-                placeholder="Landmark, Region, Product info"
-              />
-            </div>
-
-			<div className="col-md-6 mb-3">
-             
-              <div className="input-group">
-                <div className="custom-file">
-                  <input
-                    type="file"
-                    className="custom-file-input"
-                    onChange={handleImageChange}
-                    id="customFile"
-                    aria-describedby="inputGroupFileAddon03"
-                  />
-                  <label className="custom-file-label" htmlFor="customFile">
-                    Choose file
-                  </label>
-                </div>
-              
-              </div>
-              <strong className="m-1 text-success m-1">
-                {namef ? `Uploaded File: ${namef}` : ""}
-              </strong>
-            </div>
-      
-
-          </div>
-        </form>
-        <button onClick={savedata} className="btn bt2 btn-success mb-5">
-          Add Product
-        </button>
+      <div className="form-group">
+        <label>Quantity:</label>
+        <input type="number" className="form-control" name="Quantity" value={formValues.Quantity} onChange={handleChange} />
       </div>
-    </>
-  );
-}
 
-export default AddProductComponent;
+    
+
+      <div className="form-group">
+        <label>Farmer Name:</label>
+        <input type="text" className="form-control" name="FarmerName" value={formValues.FarmerName} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>Farmer Phone Number:</label>
+        <input type="text" className="form-control" name="FarmerPhoneNumber" value={formValues.FarmerPhoneNumber} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>Farmer Address:</label>
+        <input type="text" className="form-control" name="FarmerAddress" value={formValues.FarmerAddress} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>Image:</label>
+        <input type="file" className="form-control-file" onChange={handleImageChange} />
+      </div>
+
+      <button type="submit" className="btn btn-primary">Add Product</button>
+    </form>
+	</div>
+	</>
+  );
+};
+
+export default AddProductForm;
