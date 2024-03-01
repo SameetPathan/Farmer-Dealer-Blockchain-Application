@@ -1,6 +1,7 @@
 import { useEffect,React } from 'react';
 import { ethers } from 'ethers';
 import Loader from './Loader';
+import { FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
 import {
   BrowserRouter as Router,
   Routes,
@@ -109,15 +110,22 @@ function Logincomponent(props) {
     }, [])
   return (
     <>
-    <Loader></Loader>
-    {props.currentAccount ?  <div className="form-inline">
-    <Link to="/">   <button className="btn btn-danger my-2 my-sm-0 ml-2" onClick={logout} >Logout</button></Link> 
-    </div>
-    :
-    <div className="form-inline">
-        <button className="btn btn-success my-2 my-sm-0" onClick={connectWalletHandler} >Login</button>
-    </div>}
-
+      <Loader />
+      {props.currentAccount ? (
+        <div className="form-inline">
+          <Link to="/">
+            <button className="btn btn-danger my-2 my-sm-0 ml-2" onClick={logout}>
+              <FaSignOutAlt /> Logout
+            </button>
+          </Link>
+        </div>
+      ) : (
+        <div className="form-inline">
+          <button className="btn btn-success my-2 my-sm-0" onClick={connectWalletHandler}>
+            <FaSignInAlt /> Login
+          </button>
+        </div>
+      )}
     </>
   )
 }

@@ -8,6 +8,7 @@ import {
   Route,
   Link
 } from 'react-router-dom';
+import { FaArrowLeft, FaLeaf } from 'react-icons/fa';
 
 function Navbarcomponent(props) {
 
@@ -24,15 +25,14 @@ function Navbarcomponent(props) {
 
   return (
     <>
-  <Loader></Loader>
-  <div className='sticky-top'>
-
-
+    <Loader />
+    <div className='sticky-top'>
       <nav className="navbar navbar-expand-lg navbar-dark bgd">
-      
         <div className="logo-holder logo-3 mr-3">
           <a>
-            <h3>Farmer Dealer Communication</h3>
+            <h3 className='pt-2'>
+              <FaLeaf /> Farmer Dealer Communication
+            </h3>
             <p></p>
           </a>
         </div>
@@ -53,18 +53,27 @@ function Navbarcomponent(props) {
           className="collapse navbar-collapse mr-3"
           id="navbarSupportedContent"
         >
-          <ul className="navbar-nav mr-auto">
-      
-          </ul>
-          {props.currentAccount?<button className='btn btn-secondary' onClick={handleGoBack}>Go Back</button>:""}
-           
-            <Logincomponent setfixedbottom={props.setfixedbottom} setCurrentAccount={props.setCurrentAccount} setCurrentBalanace={props.setCurrentBalanace} currentAccount={props.currentAccount} currentBalance={props.currentBalance} ></Logincomponent>
+          <ul className="navbar-nav mr-auto"></ul>
+          
+          {props.currentAccount ? (
+            <button className='btn btn-secondary' onClick={handleGoBack}>
+              <FaArrowLeft /> Go Back
+            </button>
+          ) : (
+            ''
+          )}
+
+          <Logincomponent
+            setfixedbottom={props.setfixedbottom}
+            setCurrentAccount={props.setCurrentAccount}
+            setCurrentBalanace={props.setCurrentBalanace}
+            currentAccount={props.currentAccount}
+            currentBalance={props.currentBalance}
+          />
         </div>
       </nav>
     </div>
 
-
-  
 
 
   

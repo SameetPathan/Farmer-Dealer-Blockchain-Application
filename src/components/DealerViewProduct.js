@@ -639,16 +639,15 @@ function DealerViewProduct(props) {
     setacc();
   });
 
-  const [selectedYear, setSelectedYear] = useState('');
+  const [data2, setSelectedYear] = useState('');
 
   const handleYearChange = (event) => {
 		setSelectedYear(event.target.value);
 	  };
 	
-	  const filteredProducts = w2.filter((record) => {
-		const harvestDate = new Date(Number(record[5]));
-		return selectedYear === '' || harvestDate.getFullYear().toString() === selectedYear;
-	  });
+    const filteredProducts = w2.filter((record) => {
+      return data2 === '' || record.includes(data2);
+  });
 
   return (
     <div>
@@ -660,9 +659,35 @@ function DealerViewProduct(props) {
 
       <div className="container-fluid shadow-lg p-3 mb-5 bg-white rounded mt-3">
 
+
+   
+     
+
       <div className='container m-4'>
+      <div className="container" style={{width:"200px"}}>
+      <div class="input-group input-group-sm mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Product Name</span>
+      </div>
+      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"/>
+    </div>
+      </div>
+
+      <div className="container" style={{width:"200px"}}>
+      <div class="input-group input-group-sm mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Type</span>
+      </div>
+      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"/>
+    </div>
+      </div>
+
+
+     
+
+
           <label className='mr-3' htmlFor="yearFilter">Select Year: </label>
-          <select id="yearFilter" value={selectedYear} onChange={handleYearChange}>
+          <select id="yearFilter" value={data2} onChange={handleYearChange}>
             <option value="">All Years</option>
            
             <option value="2020">2020</option>
